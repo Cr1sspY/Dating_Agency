@@ -43,7 +43,7 @@ class AuthWindow(QMainWindow):
             logging.log(logging.INFO, 'Ошибка. Заполните все поля!')
             self.mes_box('Заполните все поля!')
         else:
-            password, role = self.parent().facade.get_for_authorization(auth_log)
+            password, role = self.facade.get_for_authorization(auth_log)
 
             if password != auth_pas:
                 logging.log(logging.INFO, 'Ошибка. Неправильно введены данные.')
@@ -89,6 +89,23 @@ class ProfileWindow(QMainWindow):
         super(ProfileWindow, self).__init__()
         self.ui = uic.loadUi("forms/profile.ui", self)
         self.setWindowTitle("Моя анкета")
+        self.setWindowIcon(QIcon('res/shar.png'))
+        self.ui.btn_edit.clicked.connect(self.edit)
+        self.ui.btn_exit.clicked.connect(self.exit)
+
+    def edit(self):
+        self.ui = EditWindow()
+        self.ui.show()
+
+    def exit(self):
+        self.close()
+
+
+class EditWindow(QMainWindow):
+    def __init__(self):
+        super(EditWindow, self).__init__()
+        self.ui = uic.loadUi("forms/edit.ui", self)
+        self.setWindowTitle("Редактирование анкеты")
         self.setWindowIcon(QIcon('res/shar.png'))
 
 
