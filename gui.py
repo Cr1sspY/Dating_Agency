@@ -1,6 +1,9 @@
 import sys
 import logging
 
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QApplication, QDialog
+
 from facade import Facade
 
 from PyQt5 import uic, QtWidgets
@@ -9,15 +12,17 @@ from PyQt5.Qt import *
 logging.basicConfig(level=logging.INFO)
 
 
-class AuthWindow(QMainWindow):
-    def __init__(self):
-        super(AuthWindow, self).__init__()
+class AuthWindow(QDialog):
+    def __init__(self, parent=None):
+        super(AuthWindow, self).__init__(parent)
+        self.auth_log = ''
         self.ui = uic.loadUi("forms/auth.ui", self)
         self.setWindowTitle("Авторизация")
         self.setWindowIcon(QIcon('res/shar.png'))
         self.facade = Facade()
         self.ui.btn_exit.clicked.connect(self.exit)
         self.ui.btn_enter.clicked.connect(self.enter)
+        self.log_for = ''
 
     def mes_box(self, text):
         """
@@ -30,26 +35,28 @@ class AuthWindow(QMainWindow):
         self.messagebox.setText(text)
         self.messagebox.setStandardButtons(QMessageBox.Ok)
         self.messagebox.show()
+        log_for = ''
 
     def exit(self):
-        self.close()
-        sys.exit(app.exec_())
+        self.hide()
+        self.open_auth()
 
     def enter(self):
-        auth_log = self.ui.line_login.text()
+        self.auth_log = self.ui.line_login.text()
         auth_pas = self.ui.line_password.text()
 
-        if auth_log == '' or auth_pas == '':
+        if self.auth_log == '' or auth_pas == '':
             logging.log(logging.INFO, 'Ошибка. Заполните все поля!')
             self.mes_box('Заполните все поля!')
         else:
-            password, role = self.facade.get_for_authorization(auth_log)
+            password, role = self.facade.get_for_authorization(self.auth_log)
 
             if password != auth_pas:
                 logging.log(logging.INFO, 'Ошибка. Неправильно введены данные.')
                 self.mes_box('Неправильно введены данные.')
             elif password == auth_pas:
                 logging.log(logging.INFO, 'Вход выполнен')
+                log_for = self.auth_log
                 if role == 'Клиент':
                     self.close()
                     self.ui = MainWindow()
@@ -62,7 +69,7 @@ class AuthWindow(QMainWindow):
 
 class MainWindow(QMainWindow):
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super().__init__()
         self.ui = uic.loadUi("forms/main.ui", self)
         self.setWindowTitle("Главная")
         self.setWindowIcon(QIcon('res/shar.png'))
@@ -75,6 +82,11 @@ class MainWindow(QMainWindow):
         self.ui = AuthWindow()
         self.ui.show()
 
+    def open_auth(self):
+        dialog = AuthWindow(self)
+        dialog.setWindowTitle("Авторизация")
+        dialog.show()
+
     def profile(self):
         self.ui = ProfileWindow()
         self.ui.show()
@@ -84,14 +96,27 @@ class MainWindow(QMainWindow):
         self.ui.show()
 
 
-class ProfileWindow(QMainWindow):
-    def __init__(self):
-        super(ProfileWindow, self).__init__()
+class ProfileWindow(QDialog):
+    def __init__(self, parent=None):
+        super(ProfileWindow, self).__init__(parent)
         self.ui = uic.loadUi("forms/profile.ui", self)
+        self.facade = Facade()
         self.setWindowTitle("Моя анкета")
         self.setWindowIcon(QIcon('res/shar.png'))
         self.ui.btn_edit.clicked.connect(self.edit)
         self.ui.btn_exit.clicked.connect(self.exit)
+        self.auth = AuthWindow()
+
+        self.info = self.facade.get_client_info(self.auth.log_for)
+        self.ui.label_name = self.info[0]
+        self.ui.label_sex = self.info[1]
+        self.ui.label_age = self.info[2]
+        self.ui.label_height = self.info[3]
+        self.ui.label_weight = self.info[4]
+        self.ui.label_zodiac = self.info[5]
+        self.ui.label_eyes = self.info[6]
+        self.ui.label_hair = self.info[7]
+        self.ui.label_phone = self.info[8]
 
     def edit(self):
         self.ui = EditWindow()
@@ -125,8 +150,16 @@ class AdminWindow(QMainWindow):
         self.setWindowIcon(QIcon('res/shar.png'))
 
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = AuthWindow()
-    window.show()
-    sys.exit(app.exec_())
+class Builder:
+    def __init__(self):
+        self.qapp = QApplication(sys.argv)
+        self.window = MainWindow()
+        self.auth()
+
+    def auth(self):
+        self.window.open_auth()
+        self.qapp.exec()
+
+
+if __name__ == '__main__':
+    B = Builder()

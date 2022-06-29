@@ -14,3 +14,9 @@ class Facade:
             return '', ''
         password, role = log[0], log[1]  # временные данные
         return password, role
+
+    def get_client_info(self, login):
+        return self.db.get_client_info(login)
+
+    def get_other_client_info(self, login):
+        return self.db.get_other_client_info(login)

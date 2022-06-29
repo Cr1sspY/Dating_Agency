@@ -29,3 +29,29 @@ class Database:
                 logins.append(j)
         return logins
         cursor.close()
+
+    def get_client_info(self, login):
+        client = []
+        cursor = self.conn.cursor()
+        cursor.execute(f"""SELECT Код_Клиента FROM пользователи WHERE Логин='{login}'""")
+        code = cursor.fetchone()
+        cursor.execute(f"""SELECT ФИО, Пол, Возраст, рост, вес, статус, Код_Знака, Код_Глаз, Код_Волос FROM клиенты WHERE Код_клиента='{code}'""")
+        rows = cursor.fetchall()
+        for i in rows:
+            for j in i:
+                client.append(j)
+        return client
+        cursor.close()
+
+    def get_other_client_info(self, login):
+        oth_client = []
+        cursor = self.conn.cursor()
+        cursor.execute(f"""SELECT Код_Клиента FROM пользователи WHERE Логин!='{login}'""")
+        code = cursor.fetchone()
+        cursor.execute(f"""SELECT ФИО, Пол, Возраст, рост, вес, статус, Код_Знака, Код_Глаз, Код_Волос FROM клиенты WHERE Код_клиента='{code}'""")
+        rows = cursor.fetchall()
+        for i in rows:
+            for j in i:
+                oth_client.append(j)
+        return oth_client
+        cursor.close()
