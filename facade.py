@@ -20,3 +20,23 @@ class Facade:
 
     def get_other_client_info(self, login):
         return self.db.get_other_client_info(login)
+
+    def read_users(self):
+        readed_users = self.db.read_users()
+        return readed_users
+
+    def read_clients(self):
+        readed_clients = self.db.read_clients()
+        return readed_clients
+
+    def read_zodiacs(self):
+        readed_zodiacs = self.db.read_zodiacs()
+        return readed_zodiacs
+
+    def read_hairs(self):
+        readed_hairs = self.db.read_hairs()
+        return readed_hairs
+
+    def read_eyes(self):
+        readed_eyes = self.db.read_eyes()
+        return readed_eyes

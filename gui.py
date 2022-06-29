@@ -4,6 +4,7 @@ import logging
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QApplication, QDialog
 
+import facade
 from facade import Facade
 
 from PyQt5 import uic, QtWidgets
@@ -96,7 +97,7 @@ class MainWindow(QMainWindow):
         self.ui.show()
 
 
-class ProfileWindow(QDialog):
+class ProfileWindow(QMainWindow):
     def __init__(self, parent=None):
         super(ProfileWindow, self).__init__(parent)
         self.ui = uic.loadUi("forms/profile.ui", self)
@@ -148,6 +149,187 @@ class AdminWindow(QMainWindow):
         self.ui = uic.loadUi("forms/admin.ui", self)
         self.setWindowTitle("Администратор")
         self.setWindowIcon(QIcon('res/shar.png'))
+        self.ui.btn_exit.clicked.connect(self.exit)
+        self.ui.btn_clients.clicked.connect(self.clients)
+        self.ui.btn_users.clicked.connect(self.users)
+        self.ui.btn_zodiacs.clicked.connect(self.zodiacs)
+        self.ui.btn_hairs.clicked.connect(self.hairs)
+        self.ui.btn_eyes.clicked.connect(self.eyes)
+
+    def exit(self):
+        self.close()
+        self.ui = AuthWindow()
+        self.ui.show()
+
+    def clients(self):
+        self.ui = ClientWindow()
+        self.ui.show()
+
+    def users(self):
+        self.ui = UserWindow()
+        self.ui.show()
+
+    def zodiacs(self):
+        self.ui = ZodiacWindow()
+        self.ui.show()
+
+    def hairs(self):
+        self.ui = HairWindow()
+        self.ui.show()
+
+    def eyes(self):
+        self.ui = EyeWindow()
+        self.ui.show()
+
+
+class ClientWindow(QMainWindow):
+    def __init__(self):
+        super(ClientWindow, self).__init__()
+        self.ui = uic.loadUi("forms/clients.ui", self)
+        self.setWindowTitle("Просмотр клиентов")
+        self.setWindowIcon(QIcon('res/shar.png'))
+        self.facade = Facade()
+        self.table = self.ui.table_clients
+        self.cout_client()
+        self.ui.btn_exit.clicked.connect(self.exit)
+
+    def cout_client(self):
+        self.table.clear()
+        rec = self.facade.read_clients()
+        self.table.setColumnCount(11)  # кол-во столбцов
+        self.table.setRowCount(len(rec))  # кол-во строк
+        self.table.setHorizontalHeaderLabels(['Код клиента', 'ФИО', 'Пол', 'Возраст', 'Рост', 'Вес', 'Статус', 'Код знака', 'Код глаз', 'Код волос', 'Телефон'])  # название колонок таблицы
+
+        for i, client in enumerate(rec):
+            for x, field in enumerate(client):  # i, x - координаты ячейки, в которую будем записывать текст
+                item = QTableWidgetItem()
+                item.setText(str(field))  # записываем текст в ячейку
+                if x == 0:  # для id делаем некликабельные ячейки
+                    item.setFlags(Qt.ItemIsEnabled)
+                self.table.setItem(i, x, item)
+
+    def exit(self):
+        self.close()
+
+
+class UserWindow(QMainWindow):
+    def __init__(self):
+        super(UserWindow, self).__init__()
+        self.ui = uic.loadUi("forms/clients.ui", self)
+        self.setWindowTitle("Просмотр пользователей")
+        self.setWindowIcon(QIcon('res/shar.png'))
+        self.facade = Facade()
+        self.table = self.ui.table_clients
+        self.cout_client()
+        self.ui.btn_exit.clicked.connect(self.exit)
+
+    def cout_client(self):
+        self.table.clear()
+        rec = self.facade.read_users()
+        self.table.setColumnCount(5)  # кол-во столбцов
+        self.table.setRowCount(len(rec))  # кол-во строк
+        self.table.setHorizontalHeaderLabels(['Код пользователя', 'Роль', 'Логин', 'Пароль', 'Код клиента'])  # название колонок таблицы
+
+        for i, client in enumerate(rec):
+            for x, field in enumerate(client):  # i, x - координаты ячейки, в которую будем записывать текст
+                item = QTableWidgetItem()
+                item.setText(str(field))  # записываем текст в ячейку
+                if x == 0:  # для id делаем некликабельные ячейки
+                    item.setFlags(Qt.ItemIsEnabled)
+                self.table.setItem(i, x, item)
+
+    def exit(self):
+        self.close()
+
+
+class ZodiacWindow(QMainWindow):
+    def __init__(self):
+        super(ZodiacWindow, self).__init__()
+        self.ui = uic.loadUi("forms/clients.ui", self)
+        self.setWindowTitle("Просмотр знаков зодиака")
+        self.setWindowIcon(QIcon('res/shar.png'))
+        self.facade = Facade()
+        self.table = self.ui.table_clients
+        self.cout_client()
+        self.ui.btn_exit.clicked.connect(self.exit)
+
+    def cout_client(self):
+        self.table.clear()
+        rec = self.facade.read_zodiacs()
+        self.table.setColumnCount(3)  # кол-во столбцов
+        self.table.setRowCount(len(rec))  # кол-во строк
+        self.table.setHorizontalHeaderLabels(['Код знака', 'Название', 'Описание'])  # название колонок таблицы
+
+        for i, client in enumerate(rec):
+            for x, field in enumerate(client):  # i, x - координаты ячейки, в которую будем записывать текст
+                item = QTableWidgetItem()
+                item.setText(str(field))  # записываем текст в ячейку
+                if x == 0:  # для id делаем некликабельные ячейки
+                    item.setFlags(Qt.ItemIsEnabled)
+                self.table.setItem(i, x, item)
+
+    def exit(self):
+        self.close()
+
+
+class HairWindow(QMainWindow):
+    def __init__(self):
+        super(HairWindow, self).__init__()
+        self.ui = uic.loadUi("forms/clients.ui", self)
+        self.setWindowTitle("Просмотр цветов волос")
+        self.setWindowIcon(QIcon('res/shar.png'))
+        self.facade = Facade()
+        self.table = self.ui.table_clients
+        self.cout_client()
+        self.ui.btn_exit.clicked.connect(self.exit)
+
+    def cout_client(self):
+        self.table.clear()
+        rec = self.facade.read_hairs()
+        self.table.setColumnCount(2)  # кол-во столбцов
+        self.table.setRowCount(len(rec))  # кол-во строк
+        self.table.setHorizontalHeaderLabels(['Код волос', 'Название'])  # название колонок таблицы
+
+        for i, client in enumerate(rec):
+            for x, field in enumerate(client):  # i, x - координаты ячейки, в которую будем записывать текст
+                item = QTableWidgetItem()
+                item.setText(str(field))  # записываем текст в ячейку
+                if x == 0:  # для id делаем некликабельные ячейки
+                    item.setFlags(Qt.ItemIsEnabled)
+                self.table.setItem(i, x, item)
+
+    def exit(self):
+        self.close()
+
+
+class EyeWindow(QMainWindow):
+    def __init__(self):
+        super(EyeWindow, self).__init__()
+        self.ui = uic.loadUi("forms/clients.ui", self)
+        self.setWindowTitle("Просмотр цветов глаз")
+        self.setWindowIcon(QIcon('res/shar.png'))
+        self.facade = Facade()
+        self.table = self.ui.table_clients
+        self.cout_client()
+        self.ui.btn_exit.clicked.connect(self.exit)
+
+    def cout_client(self):
+        self.table.clear()
+        rec = self.facade.read_eyes()
+        self.table.setColumnCount(2)  # кол-во столбцов
+        self.table.setRowCount(len(rec))  # кол-во строк
+        self.table.setHorizontalHeaderLabels(['Код глаз', 'Название'])  # название колонок таблицы
+
+        for i, client in enumerate(rec):
+            for x, field in enumerate(client):  # i, x - координаты ячейки, в которую будем записывать текст
+                item = QTableWidgetItem()
+                item.setText(str(field))  # записываем текст в ячейку
+                if x == 0:  # для id делаем некликабельные ячейки
+                    item.setFlags(Qt.ItemIsEnabled)
+                self.table.setItem(i, x, item)
+
+    def exit(self):
+        self.close()
 
 
 class Builder:

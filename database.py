@@ -55,3 +55,38 @@ class Database:
                 oth_client.append(j)
         return oth_client
         cursor.close()
+
+    def read_users(self):
+        cur = self.conn.cursor()
+        cur.execute("""SELECT * FROM пользователи""")
+        records_users = cur.fetchall()
+        cur.close()
+        return records_users
+
+    def read_clients(self):
+        cur = self.conn.cursor()
+        cur.execute("""SELECT * FROM клиенты""")
+        records_clients = cur.fetchall()
+        cur.close()
+        return records_clients
+
+    def read_zodiacs(self):
+        cur = self.conn.cursor()
+        cur.execute("""SELECT * FROM знаки_зодиака""")
+        records_zodiacs = cur.fetchall()
+        cur.close()
+        return records_zodiacs
+
+    def read_hairs(self):
+        cur = self.conn.cursor()
+        cur.execute("""SELECT * FROM цвета_волос""")
+        records_hairs = cur.fetchall()
+        cur.close()
+        return records_hairs
+
+    def read_eyes(self):
+        cur = self.conn.cursor()
+        cur.execute("""SELECT * FROM цвета_глаз""")
+        records_eyes = cur.fetchall()
+        cur.close()
+        return records_eyes
